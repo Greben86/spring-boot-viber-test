@@ -1,9 +1,9 @@
-package quotes.model;
+package viber.bot.model;
 
 public class ViberMessageOut {
     private String receiver;
-    private String type;
-    private ViberSenderOut sender;
+    private MessageType type;
+    private Sender sender;
     private String text;
 
     public ViberMessageOut() {}
@@ -16,19 +16,19 @@ public class ViberMessageOut {
         this.receiver = receiver;
     }
 
-    public String getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 
-    public ViberSenderOut getSender() {
+    public Sender getSender() {
         return sender;
     }
 
-    public void setSender(ViberSenderOut sender) {
+    public void setSender(Sender sender) {
         this.sender = sender;
     }
 

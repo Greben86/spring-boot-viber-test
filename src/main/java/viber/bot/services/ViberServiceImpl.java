@@ -1,5 +1,6 @@
-package quotes.services;
+package viber.bot.services;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -11,27 +12,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import quotes.model.*;
+import viber.bot.config.ViberConfig;
+import viber.bot.model.*;
 
 @Service
 @PropertySource(value= {"classpath:application.properties"})
 public class ViberServiceImpl implements ViberService {
     private static final String TOKEN_HEADER_NAME = "X-Viber-Auth-Token";
 
-    @Value("${viber.bot.token}")
-    private String botToken;
-
-    @Value("${viber.bot.url")
-    private String botUrl;
-
-    @Value("${viber.set_webhook.url}")
-    private String setWebhookUrl;
-
-    @Value("${viber.account_info.url}")
-    private String accountInfoUrl;
-
-    @Value("${viber.send_message.url}")
-    private String sendMessageUrl;
+    @Autowired
+    private ViberConfig viberConfig;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -39,50 +29,61 @@ public class ViberServiceImpl implements ViberService {
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add(TOKEN_HEADER_NAME, botToken);
+        httpHeaders.add(TOKEN_HEADER_NAME, viberConfig.getBotToken());
         return httpHeaders;
     }
 
     private ResponseEntity<String> sentMessage(String receiverId, String message) {
         ViberMessageOut viberMessageOut = new ViberMessageOut();
         viberMessageOut.setReceiver(receiverId);
-        viberMessageOut.setType("text");
+        viberMessageOut.setType(MessageType.text);
         viberMessageOut.setText(message);
 
         HttpEntity<ViberMessageOut> entity = new HttpEntity<>(viberMessageOut, getHeaders());
-        return restTemplate.exchange(sendMessageUrl, HttpMethod.POST, entity, String.class);
+        return restTemplate.exchange(viberConfig.getSendMessageUrl(), HttpMethod.POST, entity, String.class);
     }
 
     @Override
     public ResponseEntity<String> setWebhook() {
-        WebHookInfo webHookInfo = new WebHookInfo();
-        webHookInfo.setUrl(botUrl);
-        webHookInfo.setEvent_types(new String[]{"subscribed", "unsubscribed", "delivered", "message", "seen"});
+        String jsonString = new JSONObject()
+                .put("url", viberConfig.getBotUrl())
+                .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
+                        EventTypes.delivered, EventTypes.message, EventTypes.seen})
+                .toString();
 
-        HttpEntity<WebHookInfo> entity = new HttpEntity<>(webHookInfo, getHeaders());
-        return restTemplate.exchange(setWebhookUrl, HttpMethod.POST, entity, String.class);
+        HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
+        return restTemplate.exchange(viberConfig.getSetWebhookUrl(), HttpMethod.POST, entity, String.class);
     }
 
     @Override
     public ResponseEntity<String> removeWebHook() {
-        String data = "{\"url\": \""+botUrl+"\"}";
-        HttpEntity<String> entity = new HttpEntity<>(data, getHeaders());
-        return restTemplate.exchange(setWebhookUrl, HttpMethod.POST, entity, String.class);
+        String jsonString = new JSONObject()
+                .put("url", viberConfig.getBotUrl())
+                .toString();
+        HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
+        return restTemplate.exchange(viberConfig.getSetWebhookUrl(), HttpMethod.POST, entity, String.class);
     }
 
     @Override
     public ResponseEntity<AccountInfo> getAccountInfo() {
-        HttpEntity<String> entity = new HttpEntity<>("{}", getHeaders());
-        return restTemplate.exchange(accountInfoUrl, HttpMethod.POST, entity, AccountInfo.class);
+        String jsonString = new JSONObject().toString();
+        HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
+        return restTemplate.exchange(viberConfig.getAccountInfoUrl(), HttpMethod.POST, entity, AccountInfo.class);
     }
 
     @Override
     public ResponseEntity<String> botProcess(ViberMessageIn message) {
-        if ("webhook".equals(message.getEvent())) {
-            String data = "{\"status\": 0,\"status_message\": \"ok\",\"event_types\": [\"subscribed\", \"unsubscribed\", \"delivered\", \"message\", \"seen\"]}";
-            return new ResponseEntity<>(data, HttpStatus.OK);
+        if (EventTypes.webhook.equals(message.getEvent())) {
+            String jsonString = new JSONObject()
+                    .put("status", 0)
+                    .put("status_message", "ok")
+                    .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
+                            EventTypes.delivered, EventTypes.message, EventTypes.seen})
+                    .toString();
+
+            return new ResponseEntity<>(jsonString, HttpStatus.OK);
         } else
-        if ("message".equals(message.getEvent())) {
+        if (EventTypes.message.equals(message.getEvent())) {
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
         }
         return new ResponseEntity<>("", HttpStatus.OK);
