@@ -1,9 +1,9 @@
-package quotes.services;
+package viber.bot.services;
 
 import org.springframework.http.ResponseEntity;
-import quotes.model.AccountInfo;
-import quotes.model.Message;
-import quotes.model.ViberMessageIn;
+import viber.bot.model.AccountInfo;
+import viber.bot.model.Message;
+import viber.bot.model.ViberMessageIn;
 
 public interface ViberService {
 

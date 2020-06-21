@@ -1,4 +1,4 @@
-package quotes.model;
+package viber.bot.model;
 
 public class ViberSenderOut {
     private String name;

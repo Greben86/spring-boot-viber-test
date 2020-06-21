@@ -1,19 +1,19 @@
-package quotes.model;
+package viber.bot.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
 public class Message {
-    private String type;
+    private MessageType type;
     private String text;
 
     public Message() {}
 
-    public String getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 

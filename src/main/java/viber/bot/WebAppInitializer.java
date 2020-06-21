@@ -1,4 +1,4 @@
-package quotes;
+package viber.bot;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 

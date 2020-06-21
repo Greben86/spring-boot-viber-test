@@ -1,5 +1,6 @@
-package quotes.services;
+package viber.bot.services;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -11,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import quotes.model.*;
+import viber.bot.model.*;
 
 @Service
 @PropertySource(value= {"classpath:application.properties"})
@@ -21,7 +22,7 @@ public class ViberServiceImpl implements ViberService {
     @Value("${viber.bot.token}")
     private String botToken;
 
-    @Value("${viber.bot.url")
+    @Value("${viber.bot.url}")
     private String botUrl;
 
     @Value("${viber.set_webhook.url}")
@@ -33,8 +34,7 @@ public class ViberServiceImpl implements ViberService {
     @Value("${viber.send_message.url}")
     private String sendMessageUrl;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate();
 
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -46,7 +46,7 @@ public class ViberServiceImpl implements ViberService {
     private ResponseEntity<String> sentMessage(String receiverId, String message) {
         ViberMessageOut viberMessageOut = new ViberMessageOut();
         viberMessageOut.setReceiver(receiverId);
-        viberMessageOut.setType("text");
+        viberMessageOut.setType(MessageType.text);
         viberMessageOut.setText(message);
 
         HttpEntity<ViberMessageOut> entity = new HttpEntity<>(viberMessageOut, getHeaders());
@@ -55,34 +55,52 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> setWebhook() {
-        WebHookInfo webHookInfo = new WebHookInfo();
+        /*WebHookInfo webHookInfo = new WebHookInfo();
         webHookInfo.setUrl(botUrl);
-        webHookInfo.setEvent_types(new String[]{"subscribed", "unsubscribed", "delivered", "message", "seen"});
+        webHookInfo.setEvent_types(new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
+                EventTypes.delivered, EventTypes.message, EventTypes.seen});*/
 
-        HttpEntity<WebHookInfo> entity = new HttpEntity<>(webHookInfo, getHeaders());
+        String jsonString = new JSONObject()
+                .put("url", botUrl)
+                .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
+                        EventTypes.delivered, EventTypes.message, EventTypes.seen})
+                .toString();
+
+        HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
         return restTemplate.exchange(setWebhookUrl, HttpMethod.POST, entity, String.class);
     }
 
     @Override
     public ResponseEntity<String> removeWebHook() {
-        String data = "{\"url\": \""+botUrl+"\"}";
-        HttpEntity<String> entity = new HttpEntity<>(data, getHeaders());
+        //String data = "{\"url\": \""+botUrl+"\"}";
+        String jsonString = new JSONObject()
+                .put("url", botUrl)
+                .toString();
+        HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
         return restTemplate.exchange(setWebhookUrl, HttpMethod.POST, entity, String.class);
     }
 
     @Override
     public ResponseEntity<AccountInfo> getAccountInfo() {
-        HttpEntity<String> entity = new HttpEntity<>("{}", getHeaders());
+        String jsonString = new JSONObject().toString();
+        HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
         return restTemplate.exchange(accountInfoUrl, HttpMethod.POST, entity, AccountInfo.class);
     }
 
     @Override
     public ResponseEntity<String> botProcess(ViberMessageIn message) {
-        if ("webhook".equals(message.getEvent())) {
-            String data = "{\"status\": 0,\"status_message\": \"ok\",\"event_types\": [\"subscribed\", \"unsubscribed\", \"delivered\", \"message\", \"seen\"]}";
-            return new ResponseEntity<>(data, HttpStatus.OK);
+        if (EventTypes.webhook.equals(message.getEvent())) {
+            //String data = "{\"status\": 0,\"status_message\": \"ok\",\"event_types\": [\"subscribed\", \"unsubscribed\", \"delivered\", \"message\", \"seen\"]}";
+            String jsonString = new JSONObject()
+                    .put("status", 0)
+                    .put("status_message", "ok")
+                    .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
+                            EventTypes.delivered, EventTypes.message, EventTypes.seen})
+                    .toString();
+
+            return new ResponseEntity<>(jsonString, HttpStatus.OK);
         } else
-        if ("message".equals(message.getEvent())) {
+        if (EventTypes.message.equals(message.getEvent())) {
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
         }
         return new ResponseEntity<>("", HttpStatus.OK);

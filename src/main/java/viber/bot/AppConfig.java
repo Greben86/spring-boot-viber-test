@@ -1,10 +1,10 @@
-package quotes;
+package viber.bot;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import quotes.services.ViberService;
-import quotes.services.ViberServiceImpl;
+import viber.bot.services.ViberService;
+import viber.bot.services.ViberServiceImpl;
 
 @Configuration
 public class AppConfig {

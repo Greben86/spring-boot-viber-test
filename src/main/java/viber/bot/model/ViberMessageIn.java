@@ -1,17 +1,17 @@
-package quotes.model;
+package viber.bot.model;
 
 public class ViberMessageIn {
-    private String event;
+    private EventTypes event;
     private ViberSenderIn sender;
     private Message message;
 
     public ViberMessageIn() {}
 
-    public String getEvent() {
+    public EventTypes getEvent() {
         return event;
     }
 
-    public void setEvent(String event) {
+    public void setEvent(EventTypes event) {
         this.event = event;
     }
 

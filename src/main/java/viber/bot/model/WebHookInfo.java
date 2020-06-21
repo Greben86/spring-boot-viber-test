@@ -1,11 +1,11 @@
-package quotes.model;
+package viber.bot.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
 public class WebHookInfo {
     private String url;
-    private String[] event_types;
+    private EventTypes[] event_types;
 
     public WebHookInfo() {
     }
@@ -18,11 +18,11 @@ public class WebHookInfo {
         this.url = url;
     }
 
-    public String[] getEvent_types() {
+    public EventTypes[] getEvent_types() {
         return event_types;
     }
 
-    public void setEvent_types(String[] event_types) {
+    public void setEvent_types(EventTypes[] event_types) {
         this.event_types = event_types;
     }
 }

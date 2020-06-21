@@ -1,4 +1,4 @@
-package quotes.model;
+package viber.bot.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
