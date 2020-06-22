@@ -3,7 +3,7 @@ package viber.bot.model;
 public class ViberMessageOut {
     private String receiver;
     private MessageType type;
-    private ViberSenderOut sender;
+    private Sender sender;
     private String text;
 
     public ViberMessageOut() {}
@@ -24,11 +24,11 @@ public class ViberMessageOut {
         this.type = type;
     }
 
-    public ViberSenderOut getSender() {
+    public Sender getSender() {
         return sender;
     }
 
-    public void setSender(ViberSenderOut sender) {
+    public void setSender(Sender sender) {
         this.sender = sender;
     }
 

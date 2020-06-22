@@ -2,7 +2,7 @@ package viber.bot.model;
 
 public class ViberMessageIn {
     private EventTypes event;
-    private ViberSenderIn sender;
+    private Sender sender;
     private Message message;
 
     public ViberMessageIn() {}
@@ -15,11 +15,11 @@ public class ViberMessageIn {
         this.event = event;
     }
 
-    public ViberSenderIn getSender() {
+    public Sender getSender() {
         return sender;
     }
 
-    public void setSender(ViberSenderIn sender) {
+    public void setSender(Sender sender) {
         this.sender = sender;
     }
 

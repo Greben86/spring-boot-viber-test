@@ -1,11 +1,11 @@
 package viber.bot.model;
 
-public class ViberSenderIn {
+public class Sender {
     private String id;
     private String name;
     private String avatar;
 
-    public ViberSenderIn() {}
+    public Sender() {}
 
     public String getId() {
         return id;
