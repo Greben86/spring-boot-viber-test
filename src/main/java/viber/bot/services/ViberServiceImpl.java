@@ -102,7 +102,17 @@ public class ViberServiceImpl implements ViberService {
         } else
         if (EventTypes.message.equals(message.getEvent())) {
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
+        } else
+        if (EventTypes.subscribed.equals(message.getEvent())) {
+            return sentMessage(message.getSender().getId(), "Подписался - молодец!");
+        } else
+        if (EventTypes.unsubscribed.equals(message.getEvent())) {
+            return sentMessage(message.getSender().getId(), "Зачем отписался!?");
+        } else
+        if (EventTypes.conversation_started.equals(message.getEvent())) {
+            return sentMessage(message.getSender().getId(), "Беседа началась");
         }
+
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
