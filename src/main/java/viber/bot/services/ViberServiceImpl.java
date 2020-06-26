@@ -81,10 +81,10 @@ public class ViberServiceImpl implements ViberService {
     }
 
     @Override
-    public ResponseEntity<AccountInfo> getAccountInfo() {
+    public ResponseEntity<String> getAccountInfo() {
         String jsonString = new JSONObject().toString();
         HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
-        return restTemplate.exchange(accountInfoUrl, HttpMethod.POST, entity, AccountInfo.class);
+        return restTemplate.exchange(accountInfoUrl, HttpMethod.POST, entity, String.class);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> sentMessages(Message message) {
-        getAccountInfo().getBody().getMembers().forEach(member -> sentMessage(member.getId(), message.getText()));
+        //getAccountInfo().getBody().getMembers().forEach(member -> sentMessage(member.getId(), message.getText()));
 
         return new ResponseEntity<>("", HttpStatus.OK);
     }

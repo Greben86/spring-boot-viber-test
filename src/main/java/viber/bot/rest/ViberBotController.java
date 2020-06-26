@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import viber.bot.model.AccountInfo;
 import viber.bot.model.Message;
 import viber.bot.model.ViberMessageIn;
 import viber.bot.services.ViberService;
@@ -43,7 +42,7 @@ public class ViberBotController {
     }
 
     @GetMapping(value = "/accountinfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<AccountInfo> getAccountInfo() {
+    public ResponseEntity<String> getAccountInfo() {
         return viberService.getAccountInfo();
     }
 

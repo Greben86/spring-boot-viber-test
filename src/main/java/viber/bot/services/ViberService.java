@@ -1,7 +1,6 @@
 package viber.bot.services;
 
 import org.springframework.http.ResponseEntity;
-import viber.bot.model.AccountInfo;
 import viber.bot.model.Message;
 import viber.bot.model.ViberMessageIn;
 
@@ -11,7 +10,7 @@ public interface ViberService {
 
     ResponseEntity<String> removeWebHook();
 
-    ResponseEntity<AccountInfo> getAccountInfo();
+    ResponseEntity<String> getAccountInfo();
 
     ResponseEntity<String> botProcess(ViberMessageIn message);
 
