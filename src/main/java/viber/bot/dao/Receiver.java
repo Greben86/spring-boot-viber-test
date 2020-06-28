@@ -1,10 +1,20 @@
-package viber.bot.model;
+package viber.bot.dao;
 
-public class Sender {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Receiver {
+    @Id
     private String id;
     private String name;
 
-    public Sender() {}
+    public Receiver() {}
+
+    public Receiver(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public String getId() {
         return id;
