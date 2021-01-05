@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import viber.bot.config.ViberConfig;
-import viber.bot.dao.Receiver;
 import viber.bot.model.*;
 
 @Service
@@ -23,9 +22,6 @@ public class ViberServiceImpl implements ViberService {
 
     @Autowired
     private RestTemplate restTemplate;
-
-    @Autowired
-    private ReceiverService receiverService;
 
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -88,11 +84,9 @@ public class ViberServiceImpl implements ViberService {
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
         } else
         if (EventTypes.subscribed.equals(message.getEvent())) {
-            receiverService.addReceiver(new Receiver(message.getSender().getId(), message.getSender().getName()));
             return sentMessage(message.getSender().getId(), "Subscribed");
         } else
         if (EventTypes.unsubscribed.equals(message.getEvent())) {
-            receiverService.removeReceiver(message.getSender().getId());
             return sentMessage(message.getSender().getId(), "Unsubscribed");
         }
         return new ResponseEntity<>("", HttpStatus.OK);
@@ -100,8 +94,6 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> sentMessages(Message message) {
-        receiverService.getAllReceivers().forEach(receiver -> sentMessage(receiver.getId(), message.getText()));
-
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
